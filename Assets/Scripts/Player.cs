@@ -6,11 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    const float EPS = 0.0001f;
     public float speed = 2f;
-    public Vector2 jumpForce;
+    public float jumpForce;
     public int crystals = 0;
-    private bool jumping = false;
     private float horizontalMovement;
     private float verticalMovement;
 
@@ -22,10 +20,10 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        walkAnimator = gameObject.GetComponent<Animator>();
-        renderer = gameObject.GetComponent<SpriteRenderer>();
-        rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        collider = gameObject.GetComponent<CapsuleCollider2D>();
+        walkAnimator = GetComponent<Animator>();
+        renderer = GetComponent<SpriteRenderer>();
+        rigidbody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
@@ -48,7 +46,7 @@ public class Player : MonoBehaviour
         horizontalMovement *= Time.fixedDeltaTime;
 
         // check if the horizontal axis movement is significant
-        if (Mathf.Abs(horizontalMovement) > EPS)
+        if (!Mathf.Approximately(horizontalMovement, 0))
         {
             // flip the player depending on the walking direction
             renderer.flipX = (horizontalMovement < 0);
@@ -62,15 +60,15 @@ public class Player : MonoBehaviour
         rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, targetVelocity, ref refVelocity, 0.05f);
 
         // trigger walking animation if there's enough horizontal movement
-        walkAnimator.SetBool("walking", Mathf.Abs(horizontalMovement) > EPS);
+        walkAnimator.SetBool("walking", !Mathf.Approximately(horizontalMovement, 0));
 
         ///////////////////////////////// VERTICAL ///////////////////////////////////
         
         // check if the vertical axis movement is significant
-        if (Mathf.Abs(verticalMovement) > EPS)
+        if (!Mathf.Approximately(verticalMovement, 0))
         {
             // change gravity only if the player is stationary
-            if (Mathf.Abs(rigidbody.velocity.y) < EPS)
+            if (Mathf.Approximately(rigidbody.velocity.y, 0))
             {
                 if (verticalMovement < 0 ^ rigidbody.gravityScale > 0)
                 {
@@ -82,23 +80,21 @@ public class Player : MonoBehaviour
 
         ///////////////////////////////// JUMP ///////////////////////////////////
         
-        // only jump if the player is not already jumping
-        //if (!jumping)
-        //{
-        //    Debug.Log("here");
-        //    jumping = Input.GetKey(KeyCode.Space);
-        //    if (jumping)
-        //    {
-        //        if (rigidbody.gravityScale > 0)
-        //        {
-        //            rigidbody.AddForce(jumpForce, ForceMode2D.Impulse);
-        //        }
-        //        else
-        //        {
-        //            rigidbody.AddForce(-jumpForce, ForceMode2D.Impulse);
-        //        }
-        //    }
-        //}
+        // only jump if the player is not moving vertically
+        if (Mathf.Approximately(rigidbody.velocity.y, 0))
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                if (rigidbody.gravityScale > 0)
+                {
+                    rigidbody.AddForce(Vector3.up*jumpForce, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    rigidbody.AddForce(Vector3.down*jumpForce, ForceMode2D.Impulse);
+                }
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -122,9 +118,9 @@ public class Player : MonoBehaviour
             case "Pickables":
                 GameObject pickables = GameObject.Find("Pickables");
                 Tilemap tilemap = pickables.GetComponent<Tilemap>();
+
                 // destroy a crystal the player touched
-                Tilemap map = collider.GetComponent<Tilemap>();
-                tilemap.SetTile(map.WorldToCell(transform.position), null);
+                tilemap.SetTile(tilemap.WorldToCell(transform.position), null);
                 crystals++;
                 break;
         }
