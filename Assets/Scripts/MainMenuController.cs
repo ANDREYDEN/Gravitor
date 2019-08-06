@@ -6,7 +6,9 @@ public class MainMenuController : MonoBehaviour
 {
     public float delayBeforeStart;
     private bool _playClicked = false;
+
     public GameObject[] _physicalObjects;
+    public Animator canvasAnimator;
 
     private void Start()
     {
@@ -44,6 +46,22 @@ public class MainMenuController : MonoBehaviour
             _playClicked = true;
             Invoke("StartGame", delayBeforeStart);
         }
+    }
+
+    /// <summary>
+    /// Executes when the 'Settings' button on the main menu was clicked
+    /// </summary>
+    public void OnSettingsClick()
+    {
+        canvasAnimator.SetBool("showSettings", true);
+    }
+
+    /// <summary>
+    /// Executes when the 'Back' button on the settings menu was clicked
+    /// </summary>
+    public void OnSettingsBackClick()
+    {
+        canvasAnimator.SetBool("showSettings", false);
     }
 
     /// <summary>
