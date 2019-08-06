@@ -1,29 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraControl : MonoBehaviour
 {
-    public GameObject player;
+    private static CameraControl instance;
+    private GameObject Player;
+    public GameObject Background;
     public float cameraSpeed = 0.2f;
+
+    public static CameraControl Instance { get => instance; set => instance = value; }
+
     //public float maxDistance;           // max distance between the camera and the player
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        return;
+        Debug.Log("LOL");
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(Background);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // Update is called once per frame
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnFullLoad;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnFullLoad;
+    }
+
+    private void OnFullLoad(Scene scene, LoadSceneMode mode)
+    {
+        if (GameManager.Instance.State == 1)
+        {
+            Player = GameObject.FindWithTag("Player");
+        }
+    }
+    
     void FixedUpdate()
     {
-        // focus the camera on the player
-        Vector3 target = new Vector3(player.transform.position.x, player.transform.position.y, -1);     // make sure z is the same with the camera
-        SmoothFollow(target);
+        if (GameManager.Instance.State == 1) {
+            FollowObject(Player);
+        }
+        Background.transform.position = new Vector3(transform.position.x, transform.position.y, 1);                 // make background follow the camera
+    }
 
-        // move the background with the camera
-        GameObject background = GameObject.Find("BackGround");
-        background.transform.position = new Vector2(transform.position.x, transform.position.y);
+    void FollowObject(GameObject obj)
+    {
+        // focus the camera on the object
+        Vector3 target = new Vector3(Player.transform.position.x, Player.transform.position.y, -1);     // make sure z is the same as the camera's
+        SmoothFollow(target);
     }
 
     void SmoothFollow(Vector3 targetPosition)

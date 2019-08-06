@@ -1,34 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    public GameObject player;
-    private Player playerScript;
+    private static UIController instance;
+    
+    public GameObject Score;
+    public GameObject MainMenu;
+    public GameObject Canvas;
 
-    private void Start()
+    public static UIController Instance { get => instance; }
+
+    private void Awake()
     {
-        playerScript = player.GetComponent<Player>();
+        if (instance == null)
+        {
+            instance = this;
+        } 
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Canvas);
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        Text scoreText = GameObject.Find("ScoreNumber").GetComponent<Text>();
-        scoreText.text = playerScript.crystals.ToString();
+        SceneManager.sceneLoaded += OnFullLoad;
     }
 
-    public void OnWinRestart()
+    private void OnDisable()
     {
-        playerScript.Respawn();
-        ActivateWinBanner(false);
+        SceneManager.sceneLoaded -= OnFullLoad;
     }
 
-    public static void ActivateWinBanner(bool activate)
+    private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
-        GameObject canvas = GameObject.Find("Canvas");
-        GameObject winBanner = canvas.transform.Find("WinBanner").gameObject;
-        winBanner.SetActive(activate);
+        switch (GameManager.Instance.State)
+        {
+            case 1:
+                Score.SetActive(true);
+                MainMenu.SetActive(false);
+                break;
+            case 0:
+                Score.SetActive(false);
+                MainMenu.SetActive(true);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Updates the score label.
+    /// </summary>
+    /// <param name="scoreNumber">The new score</param>
+    public void UpdateScore(int scoreNumber)
+    {
+        Text scoreText = Score.GetComponentInChildren<Text>();
+        scoreText.text = scoreNumber.ToString();
     }
 }

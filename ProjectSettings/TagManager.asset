@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Score
+  - Background
   layers:
   - Default
   - TransparentFX
@@ -15,9 +17,9 @@ TagManager:
   - 
   - Camera
   - Background
-  - 
-  - 
-  - 
+  - Player
+  - Platforms
+  - UI2
   - 
   - 
   - 
@@ -49,4 +51,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 233485969
+    locked: 0
+  - name: UI
+    uniqueID: 1456926303
     locked: 0
