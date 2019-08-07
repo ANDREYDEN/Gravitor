@@ -2,28 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuController : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
     public float delayBeforeStart;
     private bool _playClicked = false;
-
+    
     public GameObject[] _physicalObjects;
-    public Animator canvasAnimator;
 
     private void Start()
     {
-        PhysicsToggle();
+
+        SetPhysics(false);
     }
 
     /// <summary>
-    /// Turns the physics of the UI on or of
+    /// Turns the physics of the UI on or off
     /// </summary>
-    public void PhysicsToggle()
+    /// /// <param name="on">on/off</param>
+    public void SetPhysics(bool on)
     {
         for (int i = 0; i < _physicalObjects.Length; i++)
         {
             Rigidbody2D rb = _physicalObjects[i].GetComponent<Rigidbody2D>();
-            rb.simulated = !rb.simulated;
+            rb.simulated = on;
             rb.gravityScale = 1 * ((i % 2 == 0) ? 1 : -1);
         }
     }
@@ -49,27 +50,16 @@ public class MainMenuController : MonoBehaviour
     }
 
     /// <summary>
-    /// Executes when the 'Settings' button on the main menu was clicked
-    /// </summary>
-    public void OnSettingsClick()
-    {
-        canvasAnimator.SetBool("showSettings", true);
-    }
-
-    /// <summary>
-    /// Executes when the 'Back' button on the settings menu was clicked
-    /// </summary>
-    public void OnSettingsBackClick()
-    {
-        canvasAnimator.SetBool("showSettings", false);
-    }
-
-    /// <summary>
     /// Closes the game
     /// </summary>
     public void Exit()
     {
         // TODO: save progress
         Application.Quit();
+    }
+
+    public void OnDisable()
+    {
+        Debug.Log("here");
     }
 }

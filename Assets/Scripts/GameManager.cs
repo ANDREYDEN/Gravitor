@@ -22,7 +22,9 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             PlayerPrefs.SetInt("currentLevel", PlayerPrefs.GetInt("currentLevel", 1)); // if this is the first launch, set the currentLevel to 1
+            PlayerPrefs.SetInt("currentLevel", 1);
             _levelNumber = PlayerPrefs.GetInt("currentLevel");
+            Debug.Log(_levelNumber);
         }
         else if (instance != this)
         {
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         state = (scene.name == "Main Menu") ? 0 : 1;
-        fadeAnimator.SetTrigger("fade");
+        fadeAnimator.SetTrigger("fade");                // fade in the new scene
     }
 
     private void Update()
@@ -68,10 +70,14 @@ public class GameManager : MonoBehaviour
             _levelNumber = levelNumber;
             if (_levelNumber > _numberOfLevels)
             {
+                PlayerPrefs.SetInt("currentLevel", 1);
                 _levelNumber = 0;                   // go to main menu after completing all levels
             }
+            else
+            {
+                PlayerPrefs.SetInt("currentLevel", _levelNumber);
+            }
         }
-        PlayerPrefs.SetInt("currentLevel", _levelNumber);
         fadeAnimator.SetTrigger("fade");            // launching the fade out animation will load the next scene
     }
   

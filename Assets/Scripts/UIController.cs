@@ -8,9 +8,9 @@ public class UIController : MonoBehaviour
 {
     private static UIController instance;
     
-    public GameObject Score;
     public GameObject MainMenu;
-    public GameObject Canvas;
+    public GameObject Score;
+    public GameObject Pause;
 
     public static UIController Instance { get => instance; }
 
@@ -25,7 +25,6 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(Canvas);
     }
 
     private void OnEnable()
@@ -44,11 +43,9 @@ public class UIController : MonoBehaviour
         {
             case 1:
                 Score.SetActive(true);
-                MainMenu.SetActive(false);
                 break;
             case 0:
                 Score.SetActive(false);
-                MainMenu.SetActive(true);
                 break;
         }
     }
