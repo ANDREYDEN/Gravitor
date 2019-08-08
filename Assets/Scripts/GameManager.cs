@@ -8,9 +8,7 @@ public class GameManager : MonoBehaviour
     private int _levelNumber = 0;
     private int _crystals = 0;
     private readonly int _numberOfLevels = 3;
-    private int state;
-
-    public Animator fadeAnimator;
+    private int state = 0;
 
     public static GameManager Instance { get => instance; }
     public int State { get => state; }
@@ -21,8 +19,8 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            PlayerPrefs.SetInt("currentLevel", PlayerPrefs.GetInt("currentLevel", 1)); // if this is the first launch, set the currentLevel to 1
             PlayerPrefs.SetInt("currentLevel", 1);
+            PlayerPrefs.SetInt("currentLevel", PlayerPrefs.GetInt("currentLevel", 1)); // if this is the first launch, set the currentLevel to 1
             _levelNumber = PlayerPrefs.GetInt("currentLevel");
             Debug.Log(_levelNumber);
         }
@@ -46,16 +44,7 @@ public class GameManager : MonoBehaviour
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         state = (scene.name == "Main Menu") ? 0 : 1;
-        fadeAnimator.SetTrigger("fade");                // fade in the new scene
-    }
-
-    private void Update()
-    {
-        // **** TEMPORARY **** //
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            SceneManager.LoadScene("Main Menu");
-        }
+        UIController.Instance.FadeInScene();
     }
 
     /// <summary>
@@ -73,12 +62,12 @@ public class GameManager : MonoBehaviour
                 PlayerPrefs.SetInt("currentLevel", 1);
                 _levelNumber = 0;                   // go to main menu after completing all levels
             }
-            else
+            else if (_levelNumber != 0)
             {
                 PlayerPrefs.SetInt("currentLevel", _levelNumber);
             }
         }
-        fadeAnimator.SetTrigger("fade");            // launching the fade out animation will load the next scene
+        UIController.Instance.FadeInScene(true);                        // launching the fade out animation will load the next scene
     }
   
     /// <summary>

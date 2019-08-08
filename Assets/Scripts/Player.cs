@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    private static Player instance;
+
     public float speed = 2f;
     public float jumpForce;
     private float horizontalInput;
@@ -15,7 +17,21 @@ public class Player : MonoBehaviour
     private SpriteRenderer renderer;
     private Rigidbody2D rigidbody;
     private CapsuleCollider2D collider;
-    
+
+    public static Player Instance { get => instance; }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -80,7 +96,7 @@ public class Player : MonoBehaviour
         // update the velocity
         Vector3 targetVelocity = new Vector2(horizontalInput, rigidbody.velocity.y);
         Vector3 refVelocity = Vector3.zero;
-        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, targetVelocity, ref refVelocity, 0.05f);
+        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, targetVelocity, ref refVelocity, 0.03f);
 
         ///////////////////////////////// VERTICAL ///////////////////////////////////
         
@@ -105,6 +121,11 @@ public class Player : MonoBehaviour
                 rigidbody.AddForce(jumpForce * direction, ForceMode2D.Impulse);
             }
         }
+    }
+
+    public void FreezeToggle()
+    {
+        rigidbody.simulated = !rigidbody.simulated;
     }
 
     /// <summary>

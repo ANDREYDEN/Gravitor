@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Pause : MonoBehaviour
 {
@@ -10,8 +8,8 @@ public class Pause : MonoBehaviour
     /// <param name="isPaused">Pause (true) or resume (false)</param>
     public void PauseResume(bool isPaused = true)
     {
-        Time.timeScale = 1 - (isPaused ? 1 : 0);    // freeze time
-        gameObject.SetActive(isPaused);              // show pause screen
+        Player.Instance.FreezeToggle();                    // freeze player
+        gameObject.SetActive(isPaused);                             // show/hide pause screen
     }
 
     public void OnPauseExit()

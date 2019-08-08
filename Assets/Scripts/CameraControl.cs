@@ -66,4 +66,9 @@ public class CameraControl : MonoBehaviour
         Vector3 refVelocity = Vector3.zero;
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref refVelocity, cameraSpeed);
     }
+
+    public void ResetPosition()
+    {
+        transform.position = Vector3.zero;
+    }
 }

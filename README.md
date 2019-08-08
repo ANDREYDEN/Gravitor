@@ -23,4 +23,4 @@ Assets: [Aiden Art](https://assetstore.unity.com/publishers/42637)
 
 Fonts: [Blambot](https://blambot.com/collections/all-fonts/products/disposable-digi)
 
-Music: to be added
+Music: [Sound Image](https://soundimage.org/)

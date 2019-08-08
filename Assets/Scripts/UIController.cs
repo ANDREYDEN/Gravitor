@@ -8,9 +8,11 @@ public class UIController : MonoBehaviour
 {
     private static UIController instance;
     
-    public GameObject MainMenu;
-    public GameObject Score;
-    public GameObject Pause;
+    public GameObject MainMenuObj;
+    public GameObject SettingsObj;
+    public GameObject FaderObj;
+    public GameObject ScoreObj;
+    public GameObject PauseObj;
 
     public static UIController Instance { get => instance; }
 
@@ -27,6 +29,12 @@ public class UIController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        FaderObj.SetActive(true);
+        FaderObj.transform.SetSiblingIndex(999);
+    }
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
@@ -37,17 +45,43 @@ public class UIController : MonoBehaviour
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
+    /// <summary>
+    /// Executes when the scene is loaded
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         switch (GameManager.Instance.State)
         {
             case 1:
-                Score.SetActive(true);
+                ScoreObj.SetActive(true);
+                MainMenuObj.SetActive(false);
+                SettingsObj.SetActive(false);
                 break;
             case 0:
-                Score.SetActive(false);
+                MainMenuObj.SetActive(true);
+                SettingsObj.SetActive(true);
+                ScoreObj.SetActive(false);
+                PauseObj.SetActive(false);
+                MainMenuObj.GetComponent<MainMenu>().SetPhysics(false);
+                //MainMenuObj.GetComponent<MainMenu>().ResetPosition();
+                CameraControl.Instance.ResetPosition();
                 break;
+        }   
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseObj.GetComponent<Pause>().PauseResume(!PauseObj.activeSelf);
         }
+    }
+
+    public void FadeInScene(bool reverse=false)
+    {
+        FaderObj.GetComponent<Fader>().FadeInScene(reverse);
     }
 
     /// <summary>
@@ -56,7 +90,7 @@ public class UIController : MonoBehaviour
     /// <param name="scoreNumber">The new score</param>
     public void UpdateScore(int scoreNumber)
     {
-        Text scoreText = Score.GetComponentInChildren<Text>();
+        Text scoreText = ScoreObj.GetComponentInChildren<Text>();
         scoreText.text = scoreNumber.ToString();
     }
 }
