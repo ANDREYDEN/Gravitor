@@ -13,10 +13,10 @@ public class Player : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
 
-    private Animator animator;
-    private SpriteRenderer renderer;
-    private Rigidbody2D rigidbody;
-    private CapsuleCollider2D collider;
+    private Animator _animator;
+    private SpriteRenderer _renderer;
+    private Rigidbody2D _rigidbody;
+    private CapsuleCollider2D _collider;
 
     public static Player Instance { get => instance; }
 
@@ -34,10 +34,10 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponent<Animator>();
-        renderer = GetComponent<SpriteRenderer>();
-        rigidbody = GetComponent<Rigidbody2D>();
-        collider = GetComponent<CapsuleCollider2D>();
+        _animator = GetComponent<Animator>();
+        _renderer = GetComponent<SpriteRenderer>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
@@ -90,42 +90,45 @@ public class Player : MonoBehaviour
         horizontalInput *= Time.fixedDeltaTime;
         if (!Mathf.Approximately(horizontalInput, 0))                               // check if the horizontal axis movement is significant
         {
-            renderer.flipX = (horizontalInput < 0);                                 // flip the player depending on the walking direction
+            _renderer.flipX = (horizontalInput < 0);                                 // flip the player depending on the walking direction
         }
 
         // update the velocity
-        Vector3 targetVelocity = new Vector2(horizontalInput, rigidbody.velocity.y);
+        Vector3 targetVelocity = new Vector2(horizontalInput, _rigidbody.velocity.y);
         Vector3 refVelocity = Vector3.zero;
-        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, targetVelocity, ref refVelocity, 0.03f);
+        _rigidbody.velocity = Vector3.SmoothDamp(_rigidbody.velocity, targetVelocity, ref refVelocity, 0.03f);
 
         ///////////////////////////////// VERTICAL ///////////////////////////////////
         
         if (!Mathf.Approximately(verticalInput, 0))                                 // check if the vertical axis movement is significant
         {
-            if (Mathf.Approximately(rigidbody.velocity.y, 0) && !CeilingCheck())    // change gravity only if the player is stationary and not touching the ceiling
+            if (Mathf.Approximately(_rigidbody.velocity.y, 0) && !CeilingCheck())    // change gravity only if the player is stationary and not touching the ceiling
             {
-                if (verticalInput < 0 ^ rigidbody.gravityScale > 0)
+                if (verticalInput < 0 ^ _rigidbody.gravityScale > 0)
                 {
-                    rigidbody.gravityScale *= -1;                                   // switch gravity *for the player*
+                    _rigidbody.gravityScale *= -1;                                   // switch gravity *for the player*
                 }
             }
         }
 
         ///////////////////////////////// JUMP ///////////////////////////////////
         
-        if (Mathf.Approximately(rigidbody.velocity.y, 0) && !CeilingCheck())        // only jump if the player is not moving vertically (and did not hit the ceiling)
+        if (Mathf.Approximately(_rigidbody.velocity.y, 0) && !CeilingCheck())        // only jump if the player is not moving vertically (and did not hit the ceiling)
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                Vector3 direction = (rigidbody.gravityScale > 0) ? Vector3.up : Vector3.down;
-                rigidbody.AddForce(jumpForce * direction, ForceMode2D.Impulse);
+                Vector3 direction = (_rigidbody.gravityScale > 0) ? Vector3.up : Vector3.down;
+                _rigidbody.AddForce(jumpForce * direction, ForceMode2D.Impulse);
             }
         }
     }
 
+    /// <summary>
+    /// Freezes/Unfreezes the player
+    /// </summary>
     public void FreezeToggle()
     {
-        rigidbody.simulated = !rigidbody.simulated;
+        _rigidbody.simulated = !_rigidbody.simulated;
     }
 
     /// <summary>
@@ -133,11 +136,11 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Animate()
     {
-        animator.SetBool("walking", !Mathf.Approximately(horizontalInput, 0));          // trigger walking animation if there's enough horizontal movement
+        _animator.SetBool("walking", !Mathf.Approximately(horizontalInput, 0));          // trigger walking animation if there's enough horizontal movement
 
         // TODO: jumping animation
 
-        renderer.flipY = rigidbody.gravityScale < 0;                                    // flip the player if the gravity direction has changed
+        _renderer.flipY = _rigidbody.gravityScale < 0;                                    // flip the player if the gravity direction has changed
     }
 
     /// <summary>
@@ -146,9 +149,9 @@ public class Player : MonoBehaviour
     private bool CeilingCheck()
     {
         // find all colliders that are overlaping the circle at the head of the player. Search in 'Platforms' layer
-        float direction = Mathf.Sign(rigidbody.gravityScale);
-        Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + direction*collider.size.y/2);
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(checkPosition, collider.size.x / 3, LayerMask.GetMask("Platforms"));
+        float direction = Mathf.Sign(_rigidbody.gravityScale);
+        Vector2 checkPosition = new Vector2(transform.position.x, transform.position.y + direction*_collider.size.y/2);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(checkPosition, _collider.size.x / 3, LayerMask.GetMask("Platforms"));
         return colliders.Length > 0;
     }
 }

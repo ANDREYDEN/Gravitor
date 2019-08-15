@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -8,6 +10,7 @@ public class GameManager : MonoBehaviour
     private int _levelNumber = 0;
     private int _crystals = 0;
     private readonly int _numberOfLevels = 3;
+    private int _maxCrystals = 0;
     private int state = 0;
 
     public static GameManager Instance { get => instance; }
@@ -22,7 +25,6 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("currentLevel", 1);
             PlayerPrefs.SetInt("currentLevel", PlayerPrefs.GetInt("currentLevel", 1)); // if this is the first launch, set the currentLevel to 1
             _levelNumber = PlayerPrefs.GetInt("currentLevel");
-            Debug.Log(_levelNumber);
         }
         else if (instance != this)
         {
@@ -44,7 +46,15 @@ public class GameManager : MonoBehaviour
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         state = (scene.name == "Main Menu") ? 0 : 1;
+        _crystals = 0;
         UIController.Instance.FadeInScene();
+        GameObject pickables = GameObject.Find("Pickables");
+        if (pickables)
+        {
+            Tilemap pickablesTM = pickables.GetComponent<Tilemap>();
+            _maxCrystals = GetNumberOfTiles(pickablesTM);
+        }
+        UIController.Instance.UpdateScore(_crystals, _maxCrystals);
     }
 
     /// <summary>
@@ -60,7 +70,7 @@ public class GameManager : MonoBehaviour
             if (_levelNumber > _numberOfLevels)
             {
                 PlayerPrefs.SetInt("currentLevel", 1);
-                _levelNumber = 0;                   // go to main menu after completing all levels
+                _levelNumber = 0;                                       // go to main menu after completing all levels
             }
             else if (_levelNumber != 0)
             {
@@ -83,6 +93,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void IncreaseScore()
     {
-        UIController.Instance.UpdateScore(++_crystals);
+        UIController.Instance.UpdateScore(++_crystals, _maxCrystals);
+    }
+
+    /// <summary>
+    /// O(n) way of calculating number of tiles
+    /// </summary>
+    /// <param name="tilemap">The tilemap </param>
+    /// <returns></returns>
+    public static int GetNumberOfTiles(Tilemap tilemap)
+    {
+        tilemap.CompressBounds();
+        TileBase[] tiles = tilemap.GetTilesBlock(tilemap.cellBounds);
+        return tiles.Where(x => x != null).ToArray().Length;
     }
 }

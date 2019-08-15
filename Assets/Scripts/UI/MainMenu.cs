@@ -14,7 +14,6 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         _positions = new List<Vector3>();
-        Debug.Log("Instantiated");
         SavePosition();
     }
 
@@ -58,7 +57,9 @@ public class MainMenu : MonoBehaviour
     }
 
     
-    // tried saving the position of the physical objects
+    /// <summary>
+    /// Save position of all physical UI objects
+    /// </summary>
     private void SavePosition()
     {
         for (int i = 0; i < _physicalObjects.Length; i++)
@@ -67,18 +68,18 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Restore the position of all physical UI objects
+    /// </summary>
     public void ResetPosition()
     {
+        Vector3 cameraPosition = CameraControl.Instance.transform.position;
         for (int i = 0; i < _physicalObjects.Length; i++)
         {
-            _physicalObjects[i].transform.position = _positions[i];
-            //_physicalObjects[i].transform.rotation = Quaternion.identity;
+            _physicalObjects[i].transform.position = new Vector3(cameraPosition.x, cameraPosition.y, 0) + _positions[i];
+            _physicalObjects[i].transform.rotation = Quaternion.identity;
         }
-        Debug.Log("Reset");
     }
-
-
-
 
     /// <summary>
     /// For loading the game with a delay. See OnPlayClick()

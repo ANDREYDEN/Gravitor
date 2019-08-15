@@ -54,18 +54,18 @@ public class UIController : MonoBehaviour
     {
         switch (GameManager.Instance.State)
         {
-            case 1:
+            case 1:                             // In Game
                 ScoreObj.SetActive(true);
                 MainMenuObj.SetActive(false);
                 SettingsObj.SetActive(false);
                 break;
-            case 0:
+            case 0:                             // Main Menu
                 MainMenuObj.SetActive(true);
                 SettingsObj.SetActive(true);
                 ScoreObj.SetActive(false);
                 PauseObj.SetActive(false);
                 MainMenuObj.GetComponent<MainMenu>().SetPhysics(false);
-                //MainMenuObj.GetComponent<MainMenu>().ResetPosition();
+                MainMenuObj.GetComponent<MainMenu>().ResetPosition();
                 CameraControl.Instance.ResetPosition();
                 break;
         }   
@@ -79,6 +79,10 @@ public class UIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Fades in the scene
+    /// </summary>
+    /// <param name="reverse">Fades out if set to true</param>
     public void FadeInScene(bool reverse=false)
     {
         FaderObj.GetComponent<Fader>().FadeInScene(reverse);
@@ -88,9 +92,9 @@ public class UIController : MonoBehaviour
     /// Updates the score label.
     /// </summary>
     /// <param name="scoreNumber">The new score</param>
-    public void UpdateScore(int scoreNumber)
+    public void UpdateScore(int scoreNumber, int maxScore)
     {
         Text scoreText = ScoreObj.GetComponentInChildren<Text>();
-        scoreText.text = scoreNumber.ToString();
+        scoreText.text = string.Format("{0}/{1}", scoreNumber, maxScore);
     }
 }

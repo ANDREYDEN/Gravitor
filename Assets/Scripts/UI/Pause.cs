@@ -8,7 +8,7 @@ public class Pause : MonoBehaviour
     /// <param name="isPaused">Pause (true) or resume (false)</param>
     public void PauseResume(bool isPaused = true)
     {
-        Player.Instance.FreezeToggle();                    // freeze player
+        Player.Instance.FreezeToggle();                             // freeze player
         gameObject.SetActive(isPaused);                             // show/hide pause screen
     }
 
