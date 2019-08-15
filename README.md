@@ -3,7 +3,7 @@ Gravitor is a simple multilevel platformer made with Unity.
 
 ## Gallery
 
-![Sample](.\Screenshots\Sample.png)
+![Sample](/Screenshots/Sample.png)
 
 ## Instructions
 
