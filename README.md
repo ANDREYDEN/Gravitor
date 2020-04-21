@@ -7,15 +7,15 @@ Gravitor is a simple multilevel platformer made with Unity.
 
 ## Instructions
 
-To launch the game go to .\\Releases\\\<choose version\>\\Gravitor.exe
+To launch the game go to `./Releases/<choose version>/Gravitor.exe`
 
 #### Controls:
 
-Movement - WASD or arrow keys 
+Movement - `WASD` or arrow keys 
 
-Jumping - Space
+Jumping - `Space`
 
-Pause - Esc
+Pause - `Esc`
 
 ## Credits
 
